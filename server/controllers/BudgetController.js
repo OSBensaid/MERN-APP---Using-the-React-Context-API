@@ -14,6 +14,19 @@ const getBudgets = async (req, res) => {
 // POST a new budget
 const createBudget = async (req, res) => {
   const { title, price } = req.body;
+  let emptyFields = [];
+  if (!title) {
+    emptyFields.push("title");
+  }
+  if (!price) {
+    emptyFields.push("price");
+  }
+  if (emptyFields.length > 0) {
+    return res
+      .status(400)
+      .json({ error: "Please fill in all fields", emptyFields });
+  }
+
   try {
     const newBudget = await Budget.create({ title, price });
     res.status(200).json(newBudget);
