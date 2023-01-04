@@ -13,13 +13,20 @@ const getBudgets = async (req, res) => {
 
 // POST a new budget
 const createBudget = async (req, res) => {
-  const { title, price } = req.body;
+  const {
+    budgetType,
+    budgetAmount,
+    budgetCategory,
+    budgetSubCategory,
+    budgetDate,
+    budgetNote,
+  } = req.body;
   let emptyFields = [];
-  if (!title) {
-    emptyFields.push("title");
+  if (!budgetDate) {
+    emptyFields.push("Please enter a budget date");
   }
-  if (!price) {
-    emptyFields.push("price");
+  if (!budgetAmount || isNaN(budgetAmount)) {
+    emptyFields.push("Please enter budget amount");
   }
   if (emptyFields.length > 0) {
     return res
@@ -28,7 +35,14 @@ const createBudget = async (req, res) => {
   }
 
   try {
-    const newBudget = await Budget.create({ title, price });
+    const newBudget = await Budget.create({
+      budgetType,
+      budgetAmount,
+      budgetCategory,
+      budgetSubCategory,
+      budgetDate,
+      budgetNote,
+    });
     res.status(200).json(newBudget);
   } catch (error) {
     res.status(400).json({ error: error.message });

@@ -2,12 +2,28 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema(
   {
-    title: {
+    budgetType: {
       type: String,
       required: true,
     },
-    price: {
+    budgetCategory: {
+      type: String,
+      required: true,
+    },
+    budgetSubCategory: {
+      type: String,
+      required: true,
+    },
+    budgetAmount: {
       type: Number,
+      required: true,
+    },
+    budgetNote: {
+      type: String,
+      required: false,
+    },
+    budgetDate: {
+      type: Date,
       required: true,
     },
   },
