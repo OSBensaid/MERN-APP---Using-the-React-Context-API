@@ -56,7 +56,7 @@ header a {
   font-size: 0.9em;
   color: #555;
 }
-.budget-details span {
+/* .budget-details span {
   position: absolute;
   top: 20px;
   right: 20px;
@@ -65,6 +65,30 @@ header a {
   padding: 6px;
   border-radius: 50%;
   color: #333;
+} */
+
+.budget-details .expenses {
+  color: var(--error);
+}
+
+.budget-details .income {
+  color: var(--primary);
+}
+
+.budget-details-item {
+  display: flex;
+  justify-content: space-between;
+}
+
+.budget-details-item > div {
+  min-width: 150px;
+}
+.budget-details-icon span {
+  font-size: 40px;
+  color: #555;
+  border: 3px solid #555;
+  border-radius: 50%;
+  padding: 10px;
 }
 
 /* new workout form */
@@ -72,7 +96,8 @@ label,
 input {
   display: block;
 }
-input {
+input,
+select {
   padding: 10px;
   margin-top: 10px;
   margin-bottom: 20px;
@@ -80,7 +105,25 @@ input {
   border: 1px solid #ddd;
   border-radius: 4px;
   box-sizing: border-box;
+  background-color: #fff;
 }
+
+.radio {
+  display: flex;
+  margin: 5px 0;
+}
+
+.radio label {
+  min-width: 100px;
+  padding: 5px;
+}
+
+input[type="radio"] {
+  margin: 0;
+  vertical-align: middle;
+  width: 16px;
+}
+
 form button {
   background: var(--primary);
   border: 0;

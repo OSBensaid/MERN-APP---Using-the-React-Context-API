@@ -1,3 +1,4 @@
+import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import React from "react";
 import { useBudgetsContext } from "../hooks/useBudgetsContext";
 
@@ -14,16 +15,42 @@ function BudgetDetails({ budget }) {
   };
 
   return (
-    <div className="budget-details">
-      <div>
-        <div> {new Date(budget.createdAt).toLocaleString("en-US")}</div>
-        <div>{budget.title}</div>
+    <div className="budget-details ">
+      <div className="budget-details-item">
+        <div className="budget-details-icon">
+          <span className="material-symbols-outlined" onClick={handleDelete}>
+            {budget.budgetCategory === "Home" ? "home" : ""}
+            {budget.budgetCategory === "Food" ? "restaurant" : ""}
+            {budget.budgetCategory === "Personal Care" ? "face" : ""}
+            {budget.budgetCategory === "Pet Care" ? "pets" : ""}
+            {budget.budgetCategory === "Misxellaneous" ? "redeem" : ""}
+            {budget.budgetCategory === "Entertainment" ? "dvr" : ""}
+            {budget.budgetCategory === "Transportation" ? "directions_car" : ""}
+            {budget.budgetCategory === "Health/Medical" ? "stethoscope" : ""}
+            {budget.budgetCategory === "Family Expenses" ? "child_care" : ""}
+          </span>
+        </div>
+        <div>
+          <h4>{budget.budgetSubCategory}</h4>
+          <p>{budget.budgetNote}</p>
+        </div>
+        <div>
+          <h4
+            className={budget.budgetType === "expenses" ? "expenses" : "income"}
+          >
+            {budget.budgetType === "incomes" ? "+$" : "-$"}
+            {budget.budgetAmount.toFixed(2)}
+          </h4>
+          <p>
+            {formatDistanceToNow(new Date(budget.budgetDate), {
+              addSuffix: true,
+            })}
+          </p>
+        </div>
+        <span className="material-symbols-outlined" onClick={handleDelete}>
+          delete
+        </span>
       </div>
-
-      <div>${budget.price}</div>
-      <span className="material-symbols-outlined" onClick={handleDelete}>
-        delete
-      </span>
     </div>
   );
 }
