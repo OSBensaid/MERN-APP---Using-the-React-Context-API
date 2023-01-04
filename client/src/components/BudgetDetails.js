@@ -47,7 +47,10 @@ function BudgetDetails({ budget }) {
             })}
           </p>
         </div>
-        <span className="material-symbols-outlined" onClick={handleDelete}>
+        <span
+          className="material-symbols-outlined delete-btn"
+          onClick={handleDelete}
+        >
           delete
         </span>
       </div>

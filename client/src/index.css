@@ -91,6 +91,10 @@ header a {
   padding: 10px;
 }
 
+.delete-btn {
+  cursor: pointer;
+  height: fit-content;
+}
 /* new workout form */
 label,
 input {

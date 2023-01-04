@@ -3,35 +3,43 @@ import { useBudgetsContext } from "../hooks/useBudgetsContext";
 import { Expenses, Incomes } from "../lib/data/Categories";
 
 function BudgetForm() {
-  const [budgetType, setBudgetType] = useState("expenses");
-  const [budgetCategory, setBudgetCategory] = useState("");
-  const [budgetSubCategory, setBudgetSubCategory] = useState("");
-  const [budgetNote, setBudgetNote] = useState("");
-  const [budgetAmount, setBudgetAmount] = useState("");
-  const [budgetDate, setBudgetDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const [formState, setFormState] = useState({
+    budgetType: "expenses",
+    budgetCategory: "",
+    budgetSubCategory: "",
+    budgetNote: "",
+    budgetAmount: "",
+    budgetDate: new Date().toISOString().split("T")[0],
+  });
+
   const [error, setError] = useState("");
   const [emptyFields, setEmptyFields] = useState([]);
 
   const { dispatch } = useBudgetsContext();
 
   useEffect(() => {
-    setBudgetCategory("");
-    setBudgetSubCategory("");
-  }, [budgetType]);
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const newBudget = {
-      budgetNote,
-      budgetAmount: parseFloat(budgetAmount),
-      budgetDate: new Date(budgetDate)
-        .toISOString()
-        .replace("00:00:00.000Z", new Date().toISOString().split("T")[1]),
-      budgetType,
-      budgetCategory,
-      budgetSubCategory,
-    };
+    setFormState((prevState) => ({
+      ...prevState,
+      budgetCategory: "",
+      budgetSubCategory: "",
+    }));
+  }, [formState.budgetType]);
+
+  const handleChage = (event) => {
+    setFormState((prevState) => ({
+      ...prevState,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const newBudget = formState;
+    newBudget.budgetAmount = parseFloat(formState.budgetAmount);
+    newBudget.budgetDate = new Date(formState.budgetDate)
+      .toISOString()
+      .replace("00:00:00.000Z", new Date().toISOString().split("T")[1]);
 
     const response = await fetch("/api/budgets", {
       method: "POST",
@@ -48,19 +56,21 @@ function BudgetForm() {
     if (response.ok) {
       setEmptyFields([]);
       setError(null);
-      setBudgetCategory("");
-      setBudgetSubCategory("");
-      setBudgetNote("");
-      setBudgetAmount("");
-      setBudgetDate(new Date().toISOString().split("T")[0]);
-
+      setFormState((prevState) => ({
+        ...prevState,
+        budgetCategory: "",
+        budgetSubCategory: "",
+        budgetNote: "",
+        budgetAmount: "",
+        budgetDate: new Date().toISOString().split("T")[0],
+      }));
       dispatch({ type: "CREATE_BUDGET", payload: json });
     }
   };
 
-  const subCategory = (budgetType === "expenses" ? Expenses : Incomes).find(
-    (item) => item.name === budgetCategory
-  );
+  const subCategory = (
+    formState.budgetType === "expenses" ? Expenses : Incomes
+  ).find((item) => item.name === formState.budgetCategory);
 
   return (
     <div className="create">
@@ -72,18 +82,20 @@ function BudgetForm() {
             <div className="radio">
               <input
                 type="radio"
+                name="budgetType"
                 value="expenses"
-                onChange={(e) => setBudgetType(e.target.value)}
-                checked={budgetType === "expenses"}
+                onChange={handleChage}
+                checked={formState.budgetType === "expenses"}
               />
               <label>Expense</label>
             </div>
             <div className="radio">
               <input
                 type="radio"
+                name="budgetType"
                 value="incomes"
-                onChange={(e) => setBudgetType(e.target.value)}
-                checked={budgetType === "incomes"}
+                onChange={handleChage}
+                checked={formState.budgetType === "incomes"}
               />
               <label>Income</label>
             </div>
@@ -92,25 +104,29 @@ function BudgetForm() {
         <div>
           <label>Budget Category:</label>
           <select
-            onChange={(e) => setBudgetCategory(e.target.value)}
-            value={budgetCategory}
+            onChange={handleChage}
+            value={formState.budgetCategory}
+            name="budgetCategory"
           >
             <option value="" disabled>
               Select budget category
             </option>
-            {(budgetType === "expenses" ? Expenses : Incomes).map((item) => (
-              <option key={item.id} value={item.name}>
-                {item.name}
-              </option>
-            ))}
+            {(formState.budgetType === "expenses" ? Expenses : Incomes).map(
+              (item) => (
+                <option key={item.id} value={item.name}>
+                  {item.name}
+                </option>
+              )
+            )}
           </select>
         </div>
-        {budgetType === "expenses" && (
+        {formState.budgetType === "expenses" && (
           <div>
             <label>Budget Sub-Category:</label>
             <select
-              onChange={(e) => setBudgetSubCategory(e.target.value)}
-              value={budgetSubCategory}
+              onChange={handleChage}
+              value={formState.budgetSubCategory}
+              name="budgetSubCategory"
             >
               <option value="" disabled>
                 Select budget subcategory
@@ -128,8 +144,9 @@ function BudgetForm() {
           <label>Budget Note:</label>
           <input
             type="text"
-            value={budgetNote}
-            onChange={(e) => setBudgetNote(e.target.value)}
+            name="budgetNote"
+            value={formState.budgetNote}
+            onChange={handleChage}
             className={emptyFields.includes("budgetNote") ? "error" : ""}
           />
         </div>
@@ -137,8 +154,9 @@ function BudgetForm() {
           <label>Budget Amount:</label>
           <input
             type="text"
-            value={budgetAmount}
-            onChange={(e) => setBudgetAmount(e.target.value)}
+            name="budgetAmount"
+            value={formState.budgetAmount}
+            onChange={handleChage}
             className={emptyFields.includes("budgetAmount") ? "error" : ""}
           />
         </div>
@@ -146,8 +164,9 @@ function BudgetForm() {
           <label>Budget Date:</label>
           <input
             type="date"
-            value={budgetDate}
-            onChange={(e) => setBudgetDate(e.target.value)}
+            name="budgetDate"
+            value={formState.budgetDate}
+            onChange={handleChage}
             className={emptyFields.includes("budgetDate") ? "error" : ""}
           />
         </div>
