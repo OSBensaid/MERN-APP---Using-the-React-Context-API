@@ -1,12 +1,22 @@
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import React from "react";
+import { useAuthContext } from "../hooks/useAuthContext";
 import { useBudgetsContext } from "../hooks/useBudgetsContext";
 
 function BudgetDetails({ budget }) {
   const { dispatch } = useBudgetsContext();
+  const { user } = useAuthContext();
+
   const handleDelete = async () => {
+    if (!user) {
+      return;
+    }
+
     const response = await fetch(`/api/budgets/${budget._id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
     });
     const json = await response.json();
     if (response.ok) {

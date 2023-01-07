@@ -6,7 +6,11 @@ const {
   updateBudget,
   deleteBudget,
 } = require("../controllers/BudgetController");
+const requireAuth = require("../middleware/requireAuth");
 const router = express.Router();
+
+// Require auth for all budgets routes.
+router.use(requireAuth);
 
 // GET All Budgets
 router.get("/", getBudgets);

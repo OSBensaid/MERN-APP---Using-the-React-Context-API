@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAuthContext } from "../hooks/useAuthContext";
 import { useBudgetsContext } from "../hooks/useBudgetsContext";
 import { Expenses, Incomes } from "../lib/data/Categories";
 
@@ -16,6 +17,8 @@ function BudgetForm() {
   const [emptyFields, setEmptyFields] = useState([]);
 
   const { dispatch } = useBudgetsContext();
+
+  const { user } = useAuthContext();
 
   useEffect(() => {
     setFormState((prevState) => ({
@@ -35,6 +38,11 @@ function BudgetForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (!user) {
+      setError("You must be logged in");
+      return;
+    }
+
     const newBudget = formState;
     newBudget.budgetAmount = parseFloat(formState.budgetAmount);
     newBudget.budgetDate = new Date(formState.budgetDate)
@@ -46,6 +54,7 @@ function BudgetForm() {
       body: JSON.stringify(newBudget),
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
       },
     });
     const json = await response.json();
@@ -68,8 +77,9 @@ function BudgetForm() {
     }
   };
 
-  const subCategory = (
-    formState.budgetType === "expenses" ? Expenses : Incomes
+  const subCategory = (formState.budgetType === "expenses"
+    ? Expenses
+    : Incomes
   ).find((item) => item.name === formState.budgetCategory);
 
   return (
